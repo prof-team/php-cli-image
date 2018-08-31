@@ -72,7 +72,7 @@ RUN composer global require hirak/prestissimo
 
 RUN apt-get clean && apt-get autoclean && apt-get autoremove -y
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN mkdir /var/tmp/xhprof && chmod 777 /var/tmp/xhprof
+
 RUN mkdir -p /var/log/php
 
 ADD ./conf.d/*.ini /usr/local/etc/php/conf.d/
