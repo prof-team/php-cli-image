@@ -7,7 +7,7 @@ RUN apt-get install -y \
         nano \
         htop \
         git \
-        cron \
+        logrotate \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
