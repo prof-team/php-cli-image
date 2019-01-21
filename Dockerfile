@@ -1,6 +1,7 @@
 FROM php:7.1-cli
 
 RUN apt-get update && apt-get install -y \
+        cron \
         python-setuptools \
         nano \
         htop \
@@ -11,7 +12,9 @@ RUN apt-get update && apt-get install -y \
         libmcrypt-dev \
         libpng-dev
 
-RUN easy_install pip && pip install supervisor && pip install superslacker
+RUN easy_install pip \
+    && pip install supervisor \
+    && pip install superslacker
 
 RUN docker-php-ext-install -j$(nproc) iconv
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
@@ -44,7 +47,7 @@ RUN pecl install apcu \
     && docker-php-ext-enable apc --ini-name 20-docker-php-ext-apc.ini
 
 # Install mongo
-RUN apt-get update && apt-get install -y \
+RUN apt-get install -y \
         libssl-dev \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb
