@@ -75,7 +75,7 @@ RUN mkdir -p /var/log/php
 
 ADD ./conf.d/*.ini /usr/local/etc/php/conf.d/
 
-ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker-entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["sh", "/entrypoint.sh"]
