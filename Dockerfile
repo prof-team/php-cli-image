@@ -74,3 +74,9 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN mkdir -p /var/log/php
 
 ADD ./conf.d/*.ini /usr/local/etc/php/conf.d/
+
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD docker-entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["sh", "/entrypoint.sh"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
