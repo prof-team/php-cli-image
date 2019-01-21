@@ -1,9 +1,7 @@
 FROM php:7.1-cli
 
-RUN apt-get update
-
-RUN apt-get install -y \
-        supervisor \
+RUN apt-get update && apt-get install -y \
+        python-setuptools \
         nano \
         htop \
         git \
@@ -12,6 +10,8 @@ RUN apt-get install -y \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng-dev
+
+RUN easy_install pip && pip install supervisor && pip install superslacker
 
 RUN docker-php-ext-install -j$(nproc) iconv
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
@@ -79,4 +79,4 @@ ADD supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker-entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["bash", "/entrypoint.sh"]
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
