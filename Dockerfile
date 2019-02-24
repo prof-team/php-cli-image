@@ -1,9 +1,8 @@
-FROM php:7.2-cli
+FROM php:7.3-cli
 
-RUN apt-get update
-
-RUN apt-get install -y \
-        supervisor \
+RUN apt-get update && apt-get install -y \
+        cron \
+        python-setuptools \
         nano \
         htop \
         git \
@@ -13,8 +12,9 @@ RUN apt-get install -y \
         libmcrypt-dev \
         libpng-dev
 
-RUN pecl install mcrypt-1.0.1
-RUN docker-php-ext-enable mcrypt
+RUN easy_install pip \
+    && pip install supervisor \
+    && pip install superslacker
 
 RUN docker-php-ext-install -j$(nproc) iconv
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
@@ -47,7 +47,7 @@ RUN pecl install apcu \
     && docker-php-ext-enable apc --ini-name 20-docker-php-ext-apc.ini
 
 # Install mongo
-RUN apt-get update && apt-get install -y \
+RUN apt-get install -y \
         libssl-dev \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb
@@ -77,3 +77,9 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN mkdir -p /var/log/php
 
 ADD ./conf.d/*.ini /usr/local/etc/php/conf.d/
+
+ADD supervisord.conf /etc/supervisor/supervisord.conf
+ADD docker-entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["bash", "/entrypoint.sh"]
+CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
