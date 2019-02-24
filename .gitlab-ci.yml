@@ -1,0 +1,14 @@
+image: docker:stable
+
+stages:
+  - build
+
+build:
+  stage: build
+  before_script:
+    - docker login -u $DOCKER_LOGIN -p$DOCKER_PASS
+  script:
+    - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then TAG="latest"; else TAG=$CI_COMMIT_REF_NAME; fi
+    - echo $TAG
+    - docker build -t profteam/php-cli:$TAG .
+    - docker push profteam/php-cli:$TAG
