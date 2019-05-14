@@ -81,5 +81,6 @@ ADD ./conf.d/*.ini /usr/local/etc/php/conf.d/
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 ADD docker-entrypoint.sh /entrypoint.sh
 
+WORKDIR /var/www
 ENTRYPOINT ["bash", "/entrypoint.sh"]
 CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
