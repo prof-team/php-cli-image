@@ -1,27 +1,34 @@
-FROM php:7.3-cli
+FROM php:7.4-cli
 
 RUN apt-get update && apt-get install -y \
         cron \
-        python-setuptools \
+        python-pip \
         nano \
         htop \
         git \
+        wget \
         logrotate \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
-        libpng-dev
+        libpng-dev \
+        libcurl4-gnutls-dev \
+        libxpm-dev \
+        libvpx-dev \
+        libonig-dev
 
-RUN easy_install pip \
-    && pip install supervisor \
+RUN pip install supervisor \
     && pip install superslacker
 
-RUN docker-php-ext-install -j$(nproc) iconv
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
-RUN docker-php-ext-install -j$(nproc) gd
-
 # Some basic extensions
-RUN docker-php-ext-install -j$(nproc) json mbstring opcache pdo pdo_mysql mysqli
+RUN docker-php-ext-install -j$(nproc) json mbstring opcache
+
+# Install gd
+RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
+RUN docker-php-ext-install gd
+
+# Install mysql
+RUN docker-php-ext-install -j$(nproc) pdo pdo_mysql mysqli
 
 # Install pgsql
 RUN apt-get install -y libpq-dev \
@@ -32,21 +39,31 @@ RUN apt-get install -y libpq-dev \
 RUN apt-get install -y libicu-dev
 RUN docker-php-ext-install -j$(nproc) intl
 
-# Install bcmath
-RUN docker-php-ext-install bcmath
+# Install amqp
+RUN apt-get install -y \
+        librabbitmq-dev \
+        libssh-dev \
+    && docker-php-ext-install \
+        bcmath \
+        sockets \
+    && pecl install amqp \
+    && docker-php-ext-enable amqp
 
 # Install Memcached
 RUN apt-get install -y libmemcached-dev zlib1g-dev
 RUN pecl install memcached
 RUN docker-php-ext-enable memcached
 
+# Install PECL Redis
+RUN pecl install redis && docker-php-ext-enable redis
+
 # Install APCu and APC backward compatibility
 RUN pecl install apcu \
-    && pecl install apcu_bc-1.0.3 \
+    && pecl install apcu_bc \
     && docker-php-ext-enable apcu --ini-name 10-docker-php-ext-apcu.ini \
     && docker-php-ext-enable apc --ini-name 20-docker-php-ext-apc.ini
 
-# Install mongo
+# Install mongodb
 RUN apt-get install -y \
         libssl-dev \
     && pecl install mongodb \
@@ -61,19 +78,28 @@ RUN apt-get install libldap2-dev -y && \
 RUN apt-get install -y \
         libzip-dev \
         zip \
-  && docker-php-ext-configure zip --with-libzip \
+        unzip \
+  && docker-php-ext-configure zip \
   && docker-php-ext-install zip
 
 RUN docker-php-ext-install exif
 
+# Install xdebub
+RUN pecl install xdebug
+
 # Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-# parallel install plugin
-RUN composer global require hirak/prestissimo
+RUN curl -sS https://getcomposer.org/installer | php -- \
+        --filename=composer \
+        --install-dir=/usr/local/bin
+
+# Install composer plugins
+RUN composer global require --optimize-autoloader "hirak/prestissimo" && \
+    composer global require "fxp/composer-asset-plugin:^1.4.6" --no-plugins && \
+    composer global dumpautoload --optimize && \
+    composer clear-cache
 
 RUN apt-get clean && apt-get autoclean && apt-get autoremove -y
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 RUN mkdir -p /var/log/php
 
 ADD ./conf.d/*.ini /usr/local/etc/php/conf.d/
