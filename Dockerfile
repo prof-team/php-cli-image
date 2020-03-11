@@ -98,6 +98,11 @@ RUN composer global require --optimize-autoloader "hirak/prestissimo" && \
     composer global dumpautoload --optimize && \
     composer clear-cache
 
+# install php-cs-fixer
+RUN curl -L https://cs.symfony.com/download/php-cs-fixer-v2.phar -o php-cs-fixer && \
+    chmod a+x php-cs-fixer && \
+    mv php-cs-fixer /usr/local/bin/php-cs-fixer
+
 RUN apt-get clean && apt-get autoclean && apt-get autoremove -y
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN mkdir -p /var/log/php
