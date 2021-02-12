@@ -87,6 +87,9 @@ RUN docker-php-ext-install exif
 # Install xdebub
 RUN pecl install xdebug
 
+# for test coverage
+RUN  pecl install pcov && docker-php-ext-enable pcov
+
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- \
         --filename=composer \
