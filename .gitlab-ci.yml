@@ -5,6 +5,8 @@ stages:
 
 build:
   stage: build
+  tags:
+    - office
   before_script:
     - docker login -u $DOCKER_LOGIN -p$DOCKER_PASS
   script:

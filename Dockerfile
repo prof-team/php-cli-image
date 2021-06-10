@@ -1,4 +1,4 @@
-FROM php:7.4-cli
+FROM php:8.0-cli
 
 RUN apt-get update && apt-get install -y \
         cron \
@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
         htop \
         git \
         wget \
+        curl \
         logrotate \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -21,7 +22,7 @@ RUN pip install supervisor \
     && pip install superslacker
 
 # Some basic extensions
-RUN docker-php-ext-install -j$(nproc) json mbstring opcache
+RUN docker-php-ext-install -j$(nproc) mbstring opcache
 
 # Install gd
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
@@ -45,9 +46,7 @@ RUN apt-get install -y \
         libssh-dev \
     && docker-php-ext-install \
         bcmath \
-        sockets \
-    && pecl install amqp \
-    && docker-php-ext-enable amqp
+        sockets
 
 # Install Memcached
 RUN apt-get install -y libmemcached-dev zlib1g-dev
@@ -57,11 +56,8 @@ RUN docker-php-ext-enable memcached
 # Install PECL Redis
 RUN pecl install redis && docker-php-ext-enable redis
 
-# Install APCu and APC backward compatibility
-RUN pecl install apcu \
-    && pecl install apcu_bc \
-    && docker-php-ext-enable apcu --ini-name 10-docker-php-ext-apcu.ini \
-    && docker-php-ext-enable apc --ini-name 20-docker-php-ext-apc.ini
+# Install APCu backward compatibility
+RUN pecl install apcu && docker-php-ext-enable apcu --ini-name 10-docker-php-ext-apcu.ini
 
 # Install mongodb
 RUN apt-get install -y \
