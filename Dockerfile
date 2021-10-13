@@ -1,8 +1,10 @@
 FROM php:8.0-cli
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y
+
+RUN apt-get install -y \
         cron \
-        python-pip \
+        supervisor \
         nano \
         htop \
         git \
@@ -17,9 +19,6 @@ RUN apt-get update && apt-get install -y \
         libxpm-dev \
         libvpx-dev \
         libonig-dev
-
-RUN pip install supervisor \
-    && pip install superslacker
 
 # Some basic extensions
 RUN docker-php-ext-install -j$(nproc) mbstring opcache
