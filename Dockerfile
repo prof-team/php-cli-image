@@ -106,4 +106,4 @@ ADD docker-entrypoint.sh /entrypoint.sh
 
 WORKDIR /var/www
 ENTRYPOINT ["bash", "/entrypoint.sh"]
-CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
