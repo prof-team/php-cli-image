@@ -18,7 +18,8 @@ RUN apt-get install -y \
         libcurl4-gnutls-dev \
         libxpm-dev \
         libvpx-dev \
-        libonig-dev
+        libonig-dev \
+        mediainfo
 
 # Some basic extensions
 RUN docker-php-ext-install -j$(nproc) mbstring opcache
