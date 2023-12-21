@@ -23,4 +23,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: profteam/php-cli:8.2
+          tags: profteam/php-cli:8.3
