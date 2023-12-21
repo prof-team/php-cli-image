@@ -1,4 +1,4 @@
-FROM php:8.1-cli
+FROM php:8.2-cli
 
 RUN apt-get update && apt-get upgrade -y
 
@@ -66,9 +66,9 @@ RUN apt-get install -y \
     && docker-php-ext-enable mongodb
 
 # Install ldap
-RUN apt-get install libldap2-dev -y && \
-    docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ && \
-    docker-php-ext-install ldap
+#RUN apt-get install libldap2-dev -y && \
+#    docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ && \
+#    docker-php-ext-install ldap
 
 # Install zip
 RUN apt-get install -y \

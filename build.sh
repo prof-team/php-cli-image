@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker build --pull --no-cache -t profteam/php-cli:8.0 .
+docker build --pull --no-cache -t profteam/php-cli:8.2 .
